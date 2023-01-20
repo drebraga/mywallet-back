@@ -5,12 +5,11 @@ import walletRouter from "./routes/WalletRoutes.js";
 
 
 const app = express();
-const PORT = 5000;
 
 app.use(express.json());
 app.use(cors());
 app.use([authRouter, walletRouter]);
 
-app.listen(process.env.PORT || PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Servidor aberto na porta ${process.env.PORT}`);
 });
