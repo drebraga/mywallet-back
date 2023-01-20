@@ -11,6 +11,6 @@ app.use(express.json());
 app.use(cors());
 app.use([authRouter, walletRouter]);
 
-app.listen(PORT, () => {
-    console.log(`Servidor aberto na porta ${PORT}`);
+app.listen(process.env.PORT || PORT, () => {
+    console.log(`Servidor aberto na porta ${process.env.PORT}`);
 });
