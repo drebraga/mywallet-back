@@ -1,5 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import dotenv from "dotenv";
+import assert from "assert";
 
 dotenv.config();
 const mongoClient = new MongoClient(process.env.MONGO_URL, {
@@ -9,20 +10,11 @@ const mongoClient = new MongoClient(process.env.MONGO_URL, {
 });
 let db;
 
-// try {
-//     await mongoClient.connect();
-//     db = mongoClient.db("mywallet");
-// } catch (err) {
-//     console.log(err);
-// }
-
-
-mongoClient.connect(err => {
-  db = client.db("mywallet");
-  if (err) {
+try {
+    await mongoClient.connect();
+    db = mongoClient.db("mywallet");
+} catch (err) {
     console.log(err);
-    mongoClient.close();
-  }
-});
+}
 
 export default db;
