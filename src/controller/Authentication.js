@@ -5,7 +5,6 @@ import db from "../config/database.js";
 
 
 export const signin = async (req, res) => {
-    const db = res.locals.db;
     const userSchema = Joi.object({
         password: Joi.string()
             .required(),
@@ -72,7 +71,6 @@ export const signin = async (req, res) => {
 };
 
 export const signup = async (req, res) => {
-    const db = res.locals.db;
     // Validação do recebido
 
     const userSchema = Joi.object({
