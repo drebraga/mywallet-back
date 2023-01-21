@@ -5,6 +5,7 @@ import db from "../config/database.js";
 
 
 export const getWallet = async (req, res) => {
+    const db = res.locals.db;
     const { authorization } = req.headers;
     const token = authorization.replace("Bearer ", "");
     if (!token) return res.sendStatus(401);
@@ -23,6 +24,7 @@ export const getWallet = async (req, res) => {
 };
 
 export const postWallet = async (req, res) => {
+    const db = res.locals.db;
     // -------------------------------------------------------------- Validação do recebido
     const transactionSchema = Joi.object({
         type: Joi.string()
