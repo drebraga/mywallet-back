@@ -5,26 +5,11 @@ import db from "../config/database.js";
 
 
 export const signin = async (req, res) => {
-    const userSchema = Joi.object({
-        password: Joi.string()
-            .required(),
-
-        email: Joi.string()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-            .required()
-    });
-
-    // Recebidos
 
     const user = req.body;
     const { authorization } = req.headers;
     const oldToken = authorization?.replace("Bearer ", "");
     const newToken = uuidv4();
-
-    // Validação do recebido 
-
-    const { error } = await userSchema.validateAsync(user);
-    if (error) return res.status(422).send(error.message);
 
     try {
         if (oldToken) {
@@ -71,31 +56,9 @@ export const signin = async (req, res) => {
 };
 
 export const signup = async (req, res) => {
-    // Validação do recebido
-
-    const userSchema = Joi.object({
-        name: Joi.string()
-            .required(),
-
-        password: Joi.string()
-            .required(),
-
-        confirmPassword: Joi.ref('password'),
-
-        email: Joi.string()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-            .required()
-    });
-
-    // Recebidos
 
     const user = req.body;
     const saltRounds = 10;
-
-    // Validação dos Recebidos
-
-    const { error } = await userSchema.validateAsync(user);
-    if (error) return res.status(422).send(err.message);
 
     try {
         const checkEmail = await db.collection("users").findOne({ email: user.email });
