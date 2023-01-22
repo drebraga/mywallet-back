@@ -1,13 +1,23 @@
+import db from "../config/database.js";
+
 const tokenCheck = () => {
-    return (req, res, next) => {
-        const { authorization } = req.headers;
-        const token = authorization?.replace("Bearer ", "");
+    return async (req, res, next) => {
+        try {
+            const { authorization } = req.headers;
+            const token = authorization?.replace("Bearer ", "");
+    
+            if (!token) return res.sendStatus(401);
+    
+            const userMatch = await db.collection("sessions").findOne({ token });
+    
+            if (!userMatch) return res.sendStatus(401);
 
-        if (!token) return res.sendStatus(401);
-
-        res.locals.token = token;
-
-        next();
+            res.locals.id = userMatch._id;
+    
+            next();
+        } catch (error) {
+            return res.sendStatus(500);
+        }
     };
 };
 

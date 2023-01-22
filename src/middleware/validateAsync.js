@@ -1,7 +1,7 @@
 const validateAsync = (schema) => {
     return async (req, res, next) => {
         try {
-            const { value } = await schema
+            const value = await schema
                 .validateAsync(req.body, { abortEarly: false });
 
             res.locals.value = value;

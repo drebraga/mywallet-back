@@ -1,6 +1,4 @@
 import { ObjectId } from "mongodb";
-import Joi from "joi";
-import dayjs from "dayjs";
 import db from "../config/database.js";
 
 
@@ -24,35 +22,67 @@ export const getWallet = async (req, res) => {
 };
 
 export const postWallet = async (req, res) => {
-    // -------------------------------------------------------------- Validação do recebido
-    const transactionSchema = Joi.object({
-        type: Joi.string()
-            .valid("in", "out")
-            .required(),
-        value: Joi.number().precision(2).required(),
-        text: Joi.string().required(),
-        date: Joi.string().required()
-    });
 
-    const { authorization } = req.headers;
-    if (!authorization) return res.sendStatus(401);
-    const token = authorization.replace("Bearer ", "");
-
-
-    const { value, error } = transactionSchema.validate({ ...req.body, date: dayjs().format("DD/MM") });
-    if (error) return res.status(422).send(error.message);
+    const value = res.locals.value;
+    const _id = res.locals.id;
 
     try {
-        const userMatch = await db.collection("sessions").findOne({ token });
-        if (!userMatch) return res.sendStatus(401);
-
-        const userWallet = await db.collection("wallet").findOne({ _id: ObjectId(userMatch._id) });
-
-        await db.collection("wallet").updateOne({ _id: ObjectId(userWallet._id) }, {
-            $set: { wallet: [value, ...userWallet.wallet] }
+        await db.collection("wallet").updateOne({ _id: ObjectId(_id) }, {
+            $push: {
+                wallet: {
+                    $each: [{
+                        type: value.type,
+                        value: value.value,
+                        text: value.text,
+                        date: value.date,
+                        _id: ObjectId()
+                    }],
+                    $position: 0
+                }
+            }
         });
 
         res.sendStatus(201);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+
+export const updateWallet = async (req, res) => {
+
+    const { _id, text, value } = res.locals.value;
+    const userId = res.locals.id;
+
+    try {
+        await db.collection("wallet").updateOne({
+            _id: userId,
+            wallet: { $elemMatch: { _id: ObjectId(_id) } }
+        }, {
+            $set: {
+                "wallet.$.text": text,
+                "wallet.$.value": value
+            }
+        });
+
+        res.sendStatus(204);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+
+export const deleteWallet = async (req, res) => {
+
+    const userId = res.locals.id;
+    const transactionId = req.body.id;
+
+    try {
+        await db.collection("wallet").updateOne({ _id: ObjectId(userId) }, {
+            $pull: {
+                wallet: { _id: ObjectId(transactionId) }
+            }
+        });
+
+        res.sendStatus(204);
     } catch (err) {
         return res.status(500).send(err.message);
     }

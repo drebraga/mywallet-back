@@ -9,3 +9,8 @@ export const transactionSchema = Joi.object({
     date: Joi.string().required()
 });
 
+export const updateTransactionSchema = Joi.object({
+    _id: Joi.string().required(),
+    value: Joi.number().precision(2).required(),
+    text: Joi.string().required()
+});
