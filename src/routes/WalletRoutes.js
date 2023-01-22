@@ -1,10 +1,13 @@
 import { getWallet, postWallet } from "../controller/Wallet.js";
-import express from "express";
+import { Router } from "express";
+import tokenCheck from "../middleware/tokenCheck.js";
+import { transactionSchema } from "../schema/walletSchema.js";
+import validateAsync from "../middleware/validateAsync.js";
 
-const walletRouter = express.Router();
+const walletRouter = Router();
 
 walletRouter.get("/wallet", getWallet);
 
-walletRouter.post("/wallet", postWallet);
+walletRouter.post("/wallet", tokenCheck(), validateAsync(transactionSchema), postWallet);
 
 export default walletRouter;

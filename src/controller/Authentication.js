@@ -1,21 +1,20 @@
-import Joi from "joi";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import db from "../config/database.js";
-
 
 export const signin = async (req, res) => {
 
     const user = req.body;
     const { authorization } = req.headers;
-    const oldToken = authorization?.replace("Bearer ", "");
+    const recivedToken = authorization?.replace("Bearer ", "");
     const newToken = uuidv4();
 
     try {
-        if (oldToken) {
-            const token = await db.collection("sessions").findOne({ token: oldToken });
-            if (token) return res.status(202).send(token.token);
-            return res.sendStatus(401);
+        if (recivedToken) {
+            const token = await db.collection("sessions").findOne({ token: recivedToken });
+            return token ?
+                res.status(202).send(token.token) :
+                res.sendStatus(401);
         }
 
         const checkUser = await db.collection("users").findOne({
@@ -62,7 +61,7 @@ export const signup = async (req, res) => {
 
     try {
         const checkEmail = await db.collection("users").findOne({ email: user.email });
-        if (checkEmail) return res.status(400).send("This email already have a account!");
+        if (checkEmail) return res.status(409).send("This email already have a account!");
 
         delete user.confirmPassword;
         bcrypt.hash(user.password, saltRounds, async function (err, hash) {
