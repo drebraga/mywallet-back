@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import db from "../config/database.js";
-
+import dayjs from "dayjs";
 
 
 export const getWallet = async (req, res) => {
@@ -34,7 +34,7 @@ export const postWallet = async (req, res) => {
                         type: value.type,
                         value: value.value,
                         text: value.text,
-                        date: value.date,
+                        date: dayjs().format("DD/MM"),
                         _id: ObjectId()
                     }],
                     $position: 0

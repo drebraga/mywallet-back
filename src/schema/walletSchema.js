@@ -5,8 +5,7 @@ export const transactionSchema = Joi.object({
         .valid("in", "out")
         .required(),
     value: Joi.number().precision(2).required(),
-    text: Joi.string().required(),
-    date: Joi.string().required()
+    text: Joi.string().required()
 });
 
 export const updateTransactionSchema = Joi.object({
