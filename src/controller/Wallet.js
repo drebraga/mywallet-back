@@ -73,7 +73,7 @@ export const updateWallet = async (req, res) => {
 export const deleteWallet = async (req, res) => {
 
     const userId = res.locals.id;
-    const transactionId = req.body.id;
+    const transactionId = req.headers._id;
 
     try {
         await db.collection("wallet").updateOne({ _id: ObjectId(userId) }, {
