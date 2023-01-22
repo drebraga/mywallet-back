@@ -6,7 +6,7 @@ import validateAsync from "../middleware/validateAsync.js";
 
 const walletRouter = Router();
 
-walletRouter.get("/wallet", getWallet);
+walletRouter.get("/wallet", tokenCheck(), getWallet);
 
 walletRouter.post("/wallet", tokenCheck(), validateAsync(transactionSchema), postWallet);
 

@@ -4,15 +4,12 @@ import dayjs from "dayjs";
 
 
 export const getWallet = async (req, res) => {
-    const { authorization } = req.headers;
-    const token = authorization.replace("Bearer ", "");
-    if (!token) return res.sendStatus(401);
+
+    const _id = res.locals.id;
 
     try {
-        const user = await db.collection("sessions").findOne({ token });
-        if (!user) return res.status(404).send("User not found");
-
-        const checkWallet = await db.collection("wallet").findOne({ _id: ObjectId(user._id) });
+        const checkWallet = await db.collection("wallet").findOne({ _id: ObjectId(_id) });
+        
         if (!checkWallet) return res.sendStatus(404);
 
         return res.send(checkWallet);

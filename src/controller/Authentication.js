@@ -5,18 +5,9 @@ import db from "../config/database.js";
 export const signin = async (req, res) => {
 
     const user = req.body;
-    const { authorization } = req.headers;
-    const recivedToken = authorization?.replace("Bearer ", "");
     const newToken = uuidv4();
 
     try {
-        if (recivedToken) {
-            const token = await db.collection("sessions").findOne({ token: recivedToken });
-            return token ?
-                res.status(202).send(token.token) :
-                res.sendStatus(401);
-        }
-
         const checkUser = await db.collection("users").findOne({
             email: user.email,
         });
