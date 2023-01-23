@@ -3,17 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import db from "../config/database.js";
 
 export const autoSignIn = async (req, res) => {
+
+    const _id = res.locals.id;
+
     try {
-        const { authorization } = req.headers;
-
-        const recivedToken = authorization?.replace("Bearer ", "");
-
-        if (recivedToken) {
-            const token = await db.collection("sessions").findOne({ token: recivedToken });
-            return token ?
-                res.status(202).send(token.token) :
-                res.sendStatus(401);
-        }
+        const token = await db.collection("sessions").findOne({ _id });
+        return token ?
+            res.status(202).send(token.token) :
+            res.sendStatus(401);
     } catch (error) {
         return res.sendStatus(500);
     }
