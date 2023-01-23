@@ -9,10 +9,31 @@ export const getWallet = async (req, res) => {
 
     try {
         const checkWallet = await db.collection("wallet").findOne({ _id: ObjectId(_id) });
-        
+
         if (!checkWallet) return res.sendStatus(404);
 
         return res.send(checkWallet);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+
+export const getTransaction = async (req, res) => {
+
+    const _id = req.params;
+    const userId = res.locals.id;
+
+    try {
+        const checkWallet = await db.collection("wallet").findOne({
+            _id: userId,
+            wallet: { $elemMatch: { _id: ObjectId(_id) } }
+        });
+
+        if (!checkWallet) return res.sendStatus(404);
+
+        const response = checkWallet.wallet;
+
+        return res.send(response);
     } catch (err) {
         return res.status(500).send(err.message);
     }
